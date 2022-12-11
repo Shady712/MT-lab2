@@ -20,13 +20,17 @@ class LexicalAnalyzer(
             nextChar()
         }
         if (curChar == -1) {
-            curToken = Token.END
-            input.close()
+            if (!this::curToken.isInitialized || curToken == Token.NOTHING) {
+                curToken = Token.END
+                input.close()
+            } else {
+                curToken = Token.NOTHING
+            }
             return
         }
         curToken = when (Char(curChar)) {
             '(' -> Token.LEFT_PARENTHESIS
-            ')' -> Token.RIGHT_PARENTHESIS
+            ')' -> if (curToken == Token.NOTHING) Token.RIGHT_PARENTHESIS else Token.NOTHING
             '*' -> Token.ASTERISK
             '|' -> Token.OR
             else -> {
@@ -44,6 +48,7 @@ class LexicalAnalyzer(
     private fun Int.isBlankChar() = this.toChar().isWhitespace()
 
     private fun nextChar() {
+        if (this::curToken.isInitialized && curToken == Token.NOTHING) return
         curPos++
         try {
             curChar = input.read()

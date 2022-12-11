@@ -1,94 +1,476 @@
 import io.kotest.matchers.shouldBe
-import syntax.regex.*
+import lex.Token
+import lex.Token.Companion.ASTERISK
+import lex.Token.Companion.NOTHING
+import lex.Token.Companion.OR
+import syntax.Tree
+import syntax.Tree.Companion.A
+import syntax.Tree.Companion.O
+import syntax.Tree.Companion.R
 
 class HappyPathParserTests : ParserTests() {
 
     init {
         "Empty regex" - {
             listOf(
-                "", "()", "\t   \r\n  \n ", "  (  \t )"
+                "", "\t   \r\n  \n "
             ).map {
-                parser.parse(it.byteInputStream()) shouldBe End
+                "Empty regex '$it'" {
+                    parser.parse(it.byteInputStream()) shouldBe Tree(NOTHING)
+                }
             }
         }
 
+        "Empty regex inside brackets" - {
+            listOf("()", "  (  \t )")
+                .map {
+                    "Empty regex inside brackets '$it'" {
+                        parser.parse(it.byteInputStream()) shouldBe Tree(R).apply {
+                            children.add(
+                                Tree(O).apply {
+                                    children.add(
+                                        Tree(A).apply {
+                                            addNothingChild()
+                                            addNothingChild()
+                                        }
+                                    )
+                                    addNothingChild()
+                                }
+                            )
+                            addNothingChild()
+                        }
+                    }
+                }
+        }
+
         "Single letter regex" {
-            parser.parse("x".byteInputStream()) shouldBe Literal('x')
+            parser.parse("x".byteInputStream()) shouldBe Tree(R).apply {
+                children.add(
+                    Tree(O).apply {
+                        children.add(
+                            Tree(A).apply {
+                                children.add(Tree(Token('x')))
+                                addNothingChild()
+                            }
+                        )
+                        addNothingChild()
+                    }
+                )
+                addNothingChild()
+            }
         }
 
         "Multiple letters" {
-            parser.parse("abc".byteInputStream()) shouldBe Concatenation(
-                left = Literal('a'),
-                right = Concatenation(Literal('b'), Literal('c'))
-            )
+            parser.parse("abc".byteInputStream()) shouldBe Tree(R).apply {
+                children.add(
+                    Tree(O).apply {
+                        children.add(
+                            Tree(A).apply {
+                                children.add(Tree(Token('a')))
+                                addNothingChild()
+                            }
+                        )
+                        addNothingChild()
+                    }
+                )
+                children.add(
+                    Tree(R).apply {
+                        children.add(
+                            Tree(O).apply {
+                                children.add(
+                                    Tree(A).apply {
+                                        children.add(Tree(Token('b')))
+                                        addNothingChild()
+                                    }
+                                )
+                                addNothingChild()
+                            }
+                        )
+                        children.add(
+                            Tree(R).apply {
+                                children.add(
+                                    Tree(O).apply {
+                                        children.add(
+                                            Tree(A).apply {
+                                                children.add(Tree(Token('c')))
+                                                addNothingChild()
+                                            }
+                                        )
+                                        addNothingChild()
+                                    }
+                                )
+                                addNothingChild()
+                            }
+                        )
+                    }
+                )
+            }
         }
 
         "Asterisk" {
-            parser.parse("x*".byteInputStream()) shouldBe Asterisk(Literal('x'))
+            parser.parse("x*".byteInputStream()) shouldBe Tree(R).apply {
+                children.add(
+                    Tree(O).apply {
+                        children.add(
+                            Tree(A).apply {
+                                children.add(Tree(Token('x')))
+                                children.add(Tree(ASTERISK))
+                            }
+                        )
+                        addNothingChild()
+                    }
+                )
+                addNothingChild()
+            }
         }
 
         "Or" {
-            parser.parse("a|b".byteInputStream()) shouldBe Or(Literal('a'), Literal('b'))
+            parser.parse("a|b".byteInputStream()) shouldBe Tree(R).apply {
+                children.add(
+                    Tree(O).apply {
+                        children.add(
+                            Tree(A).apply {
+                                children.add(Tree(Token('a')))
+                                addNothingChild()
+                            }
+                        )
+                        children.add(
+                            Tree(OR).apply {
+                                children.add(
+                                    Tree(A).apply {
+                                        children.add(Tree(Token('b')))
+                                        addNothingChild()
+                                    }
+                                )
+                            }
+                        )
+                    }
+                )
+                addNothingChild()
+            }
         }
 
         "Asterisk on regex" {
-            parser.parse("(a|b)*".byteInputStream()) shouldBe Asterisk(Or(Literal('a'), Literal('b')))
+            parser.parse("(a|b)*".byteInputStream()) shouldBe Tree(R).apply {
+                children.add(
+                    Tree(O).apply {
+                        children.add(
+                            Tree(A).apply {
+                                children.add(
+                                    Tree(R).apply {
+                                        children.add(
+                                            Tree(O).apply {
+                                                children.add(
+                                                    Tree(A).apply {
+                                                        children.add(Tree(Token('a')))
+                                                        addNothingChild()
+                                                    }
+                                                )
+                                                children.add(
+                                                    Tree(OR).apply {
+                                                        children.add(
+                                                            Tree(A).apply {
+                                                                children.add(Tree(Token('b')))
+                                                                addNothingChild()
+                                                            }
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        )
+                                        addNothingChild()
+                                    }
+                                )
+                                children.add(Tree(ASTERISK))
+                            }
+                        )
+                        addNothingChild()
+                    }
+                )
+                addNothingChild()
+            }
         }
 
         "Or on regex" {
-            parser.parse("a*|b".byteInputStream()) shouldBe Or(Asterisk(Literal('a')), Literal('b'))
-        }
-
-        "Or with empty left regex" {
-            parser.parse("|b".byteInputStream()) shouldBe Or(End, Literal('b'))
-        }
-
-        "Or with empty right regex" {
-            parser.parse("a|".byteInputStream()) shouldBe Or(Literal('a'), End)
-        }
-
-        "Or with empty left and right regexes" {
-            parser.parse("|".byteInputStream()) shouldBe Or(End, End)
-        }
-
-        "Two ors in a row" {
-            parser.parse("a||b".byteInputStream()) shouldBe Or(Literal('a'), Or(End, Literal('b')))
+            parser.parse("a*|b".byteInputStream()) shouldBe Tree(R).apply {
+                children.add(
+                    Tree(O).apply {
+                        children.add(
+                            Tree(A).apply {
+                                children.add(Tree(Token('a')))
+                                children.add(Tree(ASTERISK))
+                            }
+                        )
+                        children.add(
+                            Tree(OR).apply {
+                                children.add(
+                                    Tree(A).apply {
+                                        children.add(Tree(Token('b')))
+                                        addNothingChild()
+                                    }
+                                )
+                            }
+                        )
+                    }
+                )
+                addNothingChild()
+            }
         }
 
         "Concatenation of regexes" {
-            parser.parse("(a|b)c*".byteInputStream()) shouldBe Concatenation(
-                Or(Literal('a'), Literal('b')),
-                Asterisk(Literal('c'))
-            )
+            parser.parse("(a|b)c*".byteInputStream()) shouldBe Tree(R).apply {
+                children.add(
+                    Tree(O).apply {
+                        children.add(
+                            Tree(A).apply {
+                                children.add(
+                                    Tree(R).apply {
+                                        children.add(
+                                            Tree(O).apply {
+                                                children.add(
+                                                    Tree(A).apply {
+                                                        children.add(Tree(Token('a')))
+                                                        addNothingChild()
+                                                    }
+                                                )
+                                                children.add(
+                                                    Tree(OR).apply {
+                                                        children.add(
+                                                            Tree(A).apply {
+                                                                children.add(Tree(Token('b')))
+                                                                addNothingChild()
+                                                            }
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        )
+                                        addNothingChild()
+                                    }
+                                )
+                                addNothingChild()
+                            }
+                        )
+                        addNothingChild()
+                    }
+                )
+                children.add(
+                    Tree(R).apply {
+                        children.add(
+                            Tree(O).apply {
+                                children.add(
+                                    Tree(A).apply {
+                                        children.add(Tree(Token('c')))
+                                        children.add(Tree(ASTERISK))
+                                    }
+                                )
+                                addNothingChild()
+                            }
+                        )
+                        addNothingChild()
+                    }
+                )
+            }
         }
 
         "Sample regex" {
-            parser.parse("((abc*b|a)*ab(aa|b*)b)*".byteInputStream()) shouldBe Asterisk(
-                Concatenation(
-                    left = Asterisk(
-                        Or(
-                            left = Concatenation(
-                                Literal('a'),
-                                Concatenation(Literal('b'), Concatenation(Asterisk(Literal('c')), Literal('b')))
-                            ),
-                            right = Literal('a')
+            parser.parse("((abc*b|a)*ab(aa|b*)b)*".byteInputStream()) shouldBe Tree(R).apply {
+                children.add(
+                    Tree(O).apply {
+                        children.add(
+                            Tree(A).apply {
+                                children.add(
+                                    Tree(R).apply {
+                                        children.add(
+                                            Tree(O).apply {
+                                                children.add(
+                                                    Tree(A).apply {
+                                                        children.add(
+                                                            Tree(R).apply {
+                                                                children.add(
+                                                                    Tree(O).apply {
+                                                                        children.add(
+                                                                            Tree(A).apply {
+                                                                                children.add(Tree(Token('a')))
+                                                                                addNothingChild()
+                                                                            }
+                                                                        )
+                                                                        addNothingChild()
+                                                                    }
+                                                                )
+                                                                children.add(
+                                                                    Tree(R).apply {
+                                                                        children.add(
+                                                                            Tree(O).apply {
+                                                                                children.add(
+                                                                                    Tree(A).apply {
+                                                                                        children.add(Tree(Token('b')))
+                                                                                        addNothingChild()
+                                                                                    }
+                                                                                )
+                                                                                addNothingChild()
+                                                                            }
+                                                                        )
+                                                                        children.add(
+                                                                            Tree(R).apply {
+                                                                                children.add(
+                                                                                    Tree(O).apply {
+                                                                                        children.add(
+                                                                                            Tree(A).apply {
+                                                                                                children.add(Tree(Token('c')))
+                                                                                                children.add(Tree(ASTERISK))
+                                                                                            }
+                                                                                        )
+                                                                                        addNothingChild()
+                                                                                    }
+                                                                                )
+                                                                                children.add(
+                                                                                    Tree(R).apply {
+                                                                                        children.add(
+                                                                                            Tree(O).apply {
+                                                                                                children.add(
+                                                                                                    Tree(A).apply {
+                                                                                                        children.add(Tree(Token('b')))
+                                                                                                        addNothingChild()
+                                                                                                    }
+                                                                                                )
+                                                                                                children.add(
+                                                                                                    Tree(OR).apply {
+                                                                                                        children.add(
+                                                                                                            Tree(A).apply {
+                                                                                                                children.add(Tree(Token('a')))
+                                                                                                                addNothingChild()
+                                                                                                            }
+                                                                                                        )
+                                                                                                    }
+                                                                                                )
+                                                                                            }
+                                                                                        )
+                                                                                        addNothingChild()
+                                                                                    }
+                                                                                )
+                                                                            }
+                                                                        )
+                                                                    }
+                                                                )
+                                                            }
+                                                        )
+                                                        children.add(Tree(ASTERISK))
+                                                    }
+                                                )
+                                                addNothingChild()
+                                            }
+                                        )
+                                        children.add(
+                                            Tree(R).apply {
+                                                children.add(
+                                                    Tree(O).apply {
+                                                        children.add(
+                                                            Tree(A).apply {
+                                                                children.add(Tree(Token('a')))
+                                                                addNothingChild()
+                                                            }
+                                                        )
+                                                        addNothingChild()
+                                                    }
+                                                )
+                                                children.add(
+                                                    Tree(R).apply {
+                                                        children.add(
+                                                            Tree(O).apply {
+                                                                children.add(
+                                                                    Tree(A).apply {
+                                                                        children.add(Tree(Token('b')))
+                                                                        addNothingChild()
+                                                                    }
+                                                                )
+                                                                addNothingChild()
+                                                            }
+                                                        )
+                                                        children.add(
+                                                            Tree(R).apply {
+                                                                children.add(
+                                                                    Tree(O).apply {
+                                                                        children.add(
+                                                                            Tree(A).apply {
+                                                                                children.add(
+                                                                                    Tree(R).apply {
+                                                                                        children.add(
+                                                                                            Tree(O).apply {
+                                                                                                children.add(
+                                                                                                    Tree(A).apply {
+                                                                                                        children.add(Tree(Token('a')))
+                                                                                                        addNothingChild()
+                                                                                                    }
+                                                                                                )
+                                                                                                addNothingChild()
+                                                                                            }
+                                                                                        )
+                                                                                        children.add(
+                                                                                            Tree(R).apply {
+                                                                                                children.add(
+                                                                                                    Tree(O).apply {
+                                                                                                        children.add(
+                                                                                                            Tree(A).apply {
+                                                                                                                children.add(Tree(Token('a')))
+                                                                                                                addNothingChild()
+                                                                                                            }
+                                                                                                        )
+                                                                                                        children.add(
+                                                                                                            Tree(OR).apply {
+                                                                                                                children.add(
+                                                                                                                    Tree(A).apply {
+                                                                                                                        children.add(Tree(Token('b')))
+                                                                                                                        children.add(Tree(ASTERISK))
+                                                                                                                    }
+                                                                                                                )
+                                                                                                            }
+                                                                                                        )
+                                                                                                    }
+                                                                                                )
+                                                                                                addNothingChild()
+                                                                                            }
+                                                                                        )
+                                                                                    }
+                                                                                )
+                                                                                addNothingChild()
+                                                                            }
+                                                                        )
+                                                                        addNothingChild()
+                                                                    }
+                                                                )
+                                                                children.add(
+                                                                    Tree(R).apply {
+                                                                        children.add(
+                                                                            Tree(O).apply {
+                                                                                children.add(
+                                                                                    Tree(A).apply {
+                                                                                        children.add(Tree(Token('b')))
+                                                                                        addNothingChild()
+                                                                                    }
+                                                                                )
+                                                                                addNothingChild()
+                                                                            }
+                                                                        )
+                                                                        addNothingChild()
+                                                                    }
+                                                                )
+                                                            }
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        )
+                                    }
+                                )
+                                children.add(Tree(ASTERISK))
+                            }
                         )
-                    ),
-                    right = Concatenation(
-                        Literal('a'),
-                        Concatenation(
-                            Literal('b'), Concatenation(
-                                Or(
-                                    left = Concatenation(Literal('a'), Literal('a')),
-                                    right = Asterisk(Literal('b'))
-                                ),
-                                Literal('b')
-                            )
-                        )
-                    )
+                        addNothingChild()
+                    }
                 )
-            )
-
+                addNothingChild()
+            }
         }
     }
 }
