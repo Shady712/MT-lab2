@@ -1,10 +1,10 @@
 package lex
 
 
-open class Token(val value: Char) {
+open class Token(val value: String) {
 
     override fun toString(): String {
-        return value.toString()
+        return value
     }
 
     override fun equals(other: Any?): Boolean {
@@ -23,11 +23,13 @@ open class Token(val value: Char) {
     }
 
     companion object {
-        val LEFT_PARENTHESIS = Token('(')
-        val RIGHT_PARENTHESIS = Token(')')
-        val OR = Token('|')
-        val ASTERISK = Token('*')
-        val END = Token('$')
-        val NOTHING = Token('_')
+        val LEFT_PARENTHESIS = Token("(")
+        val RIGHT_PARENTHESIS = Token(")")
+        val LEFT_SQR_PAR = Token("[")
+        val RIGHT_SQR_PAR = Token("]")
+        val OR = Token("|")
+        val ASTERISK = Token("*")
+        val END = Token("$")
+        val NOTHING = Token("_")
     }
 }

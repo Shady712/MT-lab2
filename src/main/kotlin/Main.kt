@@ -2,7 +2,7 @@ import syntax.Parser
 import java.io.File
 
 fun main() {
-    val input = "((abc*b|a)*ab(aa|b*)b)*"
+    val input = "[a-x]*|b[xd]"
     val parser = Parser()
     val tree = parser.parse(input.byteInputStream())
     println(tree)

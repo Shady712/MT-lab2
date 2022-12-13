@@ -28,10 +28,11 @@ data class Tree(val value: Token, val children: MutableList<Tree> = mutableListO
     companion object {
         val nextId = AtomicInteger(0)
 
-        class NonTerminalToken(value: Char) : Token(value)
+        class NonTerminalToken(value: String) : Token(value)
 
-        val R = NonTerminalToken('R')
-        val O = NonTerminalToken('O')
-        val A = NonTerminalToken('A')
+        val R = NonTerminalToken("R")
+        val O = NonTerminalToken("O")
+        val A = NonTerminalToken("A")
+        val S = NonTerminalToken("S")
     }
 }

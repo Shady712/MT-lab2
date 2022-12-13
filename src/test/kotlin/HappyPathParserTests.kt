@@ -7,6 +7,7 @@ import syntax.Tree
 import syntax.Tree.Companion.A
 import syntax.Tree.Companion.O
 import syntax.Tree.Companion.R
+import syntax.Tree.Companion.S
 
 class HappyPathParserTests : ParserTests() {
 
@@ -49,7 +50,7 @@ class HappyPathParserTests : ParserTests() {
                     Tree(O).apply {
                         children.add(
                             Tree(A).apply {
-                                children.add(Tree(Token('x')))
+                                children.add(Tree(Token("x")))
                                 addNothingChild()
                             }
                         )
@@ -66,7 +67,7 @@ class HappyPathParserTests : ParserTests() {
                     Tree(O).apply {
                         children.add(
                             Tree(A).apply {
-                                children.add(Tree(Token('a')))
+                                children.add(Tree(Token("a")))
                                 addNothingChild()
                             }
                         )
@@ -79,7 +80,7 @@ class HappyPathParserTests : ParserTests() {
                             Tree(O).apply {
                                 children.add(
                                     Tree(A).apply {
-                                        children.add(Tree(Token('b')))
+                                        children.add(Tree(Token("b")))
                                         addNothingChild()
                                     }
                                 )
@@ -92,7 +93,7 @@ class HappyPathParserTests : ParserTests() {
                                     Tree(O).apply {
                                         children.add(
                                             Tree(A).apply {
-                                                children.add(Tree(Token('c')))
+                                                children.add(Tree(Token("c")))
                                                 addNothingChild()
                                             }
                                         )
@@ -113,7 +114,7 @@ class HappyPathParserTests : ParserTests() {
                     Tree(O).apply {
                         children.add(
                             Tree(A).apply {
-                                children.add(Tree(Token('x')))
+                                children.add(Tree(Token("x")))
                                 children.add(Tree(ASTERISK))
                             }
                         )
@@ -130,7 +131,7 @@ class HappyPathParserTests : ParserTests() {
                     Tree(O).apply {
                         children.add(
                             Tree(A).apply {
-                                children.add(Tree(Token('a')))
+                                children.add(Tree(Token("a")))
                                 addNothingChild()
                             }
                         )
@@ -138,7 +139,7 @@ class HappyPathParserTests : ParserTests() {
                             Tree(OR).apply {
                                 children.add(
                                     Tree(A).apply {
-                                        children.add(Tree(Token('b')))
+                                        children.add(Tree(Token("b")))
                                         addNothingChild()
                                     }
                                 )
@@ -162,7 +163,7 @@ class HappyPathParserTests : ParserTests() {
                                             Tree(O).apply {
                                                 children.add(
                                                     Tree(A).apply {
-                                                        children.add(Tree(Token('a')))
+                                                        children.add(Tree(Token("a")))
                                                         addNothingChild()
                                                     }
                                                 )
@@ -170,7 +171,7 @@ class HappyPathParserTests : ParserTests() {
                                                     Tree(OR).apply {
                                                         children.add(
                                                             Tree(A).apply {
-                                                                children.add(Tree(Token('b')))
+                                                                children.add(Tree(Token("b")))
                                                                 addNothingChild()
                                                             }
                                                         )
@@ -197,7 +198,7 @@ class HappyPathParserTests : ParserTests() {
                     Tree(O).apply {
                         children.add(
                             Tree(A).apply {
-                                children.add(Tree(Token('a')))
+                                children.add(Tree(Token("a")))
                                 children.add(Tree(ASTERISK))
                             }
                         )
@@ -205,7 +206,7 @@ class HappyPathParserTests : ParserTests() {
                             Tree(OR).apply {
                                 children.add(
                                     Tree(A).apply {
-                                        children.add(Tree(Token('b')))
+                                        children.add(Tree(Token("b")))
                                         addNothingChild()
                                     }
                                 )
@@ -229,7 +230,7 @@ class HappyPathParserTests : ParserTests() {
                                             Tree(O).apply {
                                                 children.add(
                                                     Tree(A).apply {
-                                                        children.add(Tree(Token('a')))
+                                                        children.add(Tree(Token("a")))
                                                         addNothingChild()
                                                     }
                                                 )
@@ -237,7 +238,7 @@ class HappyPathParserTests : ParserTests() {
                                                     Tree(OR).apply {
                                                         children.add(
                                                             Tree(A).apply {
-                                                                children.add(Tree(Token('b')))
+                                                                children.add(Tree(Token("b")))
                                                                 addNothingChild()
                                                             }
                                                         )
@@ -260,7 +261,7 @@ class HappyPathParserTests : ParserTests() {
                             Tree(O).apply {
                                 children.add(
                                     Tree(A).apply {
-                                        children.add(Tree(Token('c')))
+                                        children.add(Tree(Token("c")))
                                         children.add(Tree(ASTERISK))
                                     }
                                 )
@@ -291,7 +292,7 @@ class HappyPathParserTests : ParserTests() {
                                                                     Tree(O).apply {
                                                                         children.add(
                                                                             Tree(A).apply {
-                                                                                children.add(Tree(Token('a')))
+                                                                                children.add(Tree(Token("a")))
                                                                                 addNothingChild()
                                                                             }
                                                                         )
@@ -304,7 +305,7 @@ class HappyPathParserTests : ParserTests() {
                                                                             Tree(O).apply {
                                                                                 children.add(
                                                                                     Tree(A).apply {
-                                                                                        children.add(Tree(Token('b')))
+                                                                                        children.add(Tree(Token("b")))
                                                                                         addNothingChild()
                                                                                     }
                                                                                 )
@@ -317,7 +318,7 @@ class HappyPathParserTests : ParserTests() {
                                                                                     Tree(O).apply {
                                                                                         children.add(
                                                                                             Tree(A).apply {
-                                                                                                children.add(Tree(Token('c')))
+                                                                                                children.add(Tree(Token("c")))
                                                                                                 children.add(Tree(ASTERISK))
                                                                                             }
                                                                                         )
@@ -330,7 +331,7 @@ class HappyPathParserTests : ParserTests() {
                                                                                             Tree(O).apply {
                                                                                                 children.add(
                                                                                                     Tree(A).apply {
-                                                                                                        children.add(Tree(Token('b')))
+                                                                                                        children.add(Tree(Token("b")))
                                                                                                         addNothingChild()
                                                                                                     }
                                                                                                 )
@@ -338,7 +339,7 @@ class HappyPathParserTests : ParserTests() {
                                                                                                     Tree(OR).apply {
                                                                                                         children.add(
                                                                                                             Tree(A).apply {
-                                                                                                                children.add(Tree(Token('a')))
+                                                                                                                children.add(Tree(Token("a")))
                                                                                                                 addNothingChild()
                                                                                                             }
                                                                                                         )
@@ -367,7 +368,7 @@ class HappyPathParserTests : ParserTests() {
                                                     Tree(O).apply {
                                                         children.add(
                                                             Tree(A).apply {
-                                                                children.add(Tree(Token('a')))
+                                                                children.add(Tree(Token("a")))
                                                                 addNothingChild()
                                                             }
                                                         )
@@ -380,7 +381,7 @@ class HappyPathParserTests : ParserTests() {
                                                             Tree(O).apply {
                                                                 children.add(
                                                                     Tree(A).apply {
-                                                                        children.add(Tree(Token('b')))
+                                                                        children.add(Tree(Token("b")))
                                                                         addNothingChild()
                                                                     }
                                                                 )
@@ -399,7 +400,7 @@ class HappyPathParserTests : ParserTests() {
                                                                                             Tree(O).apply {
                                                                                                 children.add(
                                                                                                     Tree(A).apply {
-                                                                                                        children.add(Tree(Token('a')))
+                                                                                                        children.add(Tree(Token("a")))
                                                                                                         addNothingChild()
                                                                                                     }
                                                                                                 )
@@ -412,7 +413,7 @@ class HappyPathParserTests : ParserTests() {
                                                                                                     Tree(O).apply {
                                                                                                         children.add(
                                                                                                             Tree(A).apply {
-                                                                                                                children.add(Tree(Token('a')))
+                                                                                                                children.add(Tree(Token("a")))
                                                                                                                 addNothingChild()
                                                                                                             }
                                                                                                         )
@@ -420,7 +421,7 @@ class HappyPathParserTests : ParserTests() {
                                                                                                             Tree(OR).apply {
                                                                                                                 children.add(
                                                                                                                     Tree(A).apply {
-                                                                                                                        children.add(Tree(Token('b')))
+                                                                                                                        children.add(Tree(Token("b")))
                                                                                                                         children.add(Tree(ASTERISK))
                                                                                                                     }
                                                                                                                 )
@@ -445,7 +446,7 @@ class HappyPathParserTests : ParserTests() {
                                                                             Tree(O).apply {
                                                                                 children.add(
                                                                                     Tree(A).apply {
-                                                                                        children.add(Tree(Token('b')))
+                                                                                        children.add(Tree(Token("b")))
                                                                                         addNothingChild()
                                                                                     }
                                                                                 )
@@ -464,6 +465,27 @@ class HappyPathParserTests : ParserTests() {
                                     }
                                 )
                                 children.add(Tree(ASTERISK))
+                            }
+                        )
+                        addNothingChild()
+                    }
+                )
+                addNothingChild()
+            }
+        }
+
+        "Sqr pars" {
+            parser.parse("[a-x]".byteInputStream()) shouldBe Tree(R).apply {
+                children.add(
+                    Tree(O).apply {
+                        children.add(
+                            Tree(A).apply {
+                                children.add(
+                                    Tree(S).apply {
+                                        children.add(Tree(Token("a-x")))
+                                    }
+                                )
+                                addNothingChild()
                             }
                         )
                         addNothingChild()

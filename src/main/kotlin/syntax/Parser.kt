@@ -6,6 +6,7 @@ import lex.Token
 import syntax.Tree.Companion.A
 import syntax.Tree.Companion.O
 import syntax.Tree.Companion.R
+import syntax.Tree.Companion.S
 import java.io.InputStream
 
 class Parser {
@@ -88,13 +89,26 @@ class Parser {
                 ans
             }
 
-            curToken().value.isLetter() -> Tree(curToken()).also { lexicalAnalyzer.nextToken() }
+            curToken() == Token.LEFT_SQR_PAR -> {
+                lexicalAnalyzer.nextToken()
+                val ans = Tree(S).apply {
+                    children.add(Tree(curToken()))
+                }
+                lexicalAnalyzer.nextToken()
+                if (curToken() != Token.RIGHT_SQR_PAR) {
+                    throw ParseException("Expected right sqr parenthesis", curPos())
+                }
+                lexicalAnalyzer.nextToken()
+                ans
+            }
+
+            curToken().value.length == 1 && curToken().value.first().isLetter() -> Tree(curToken()).also { lexicalAnalyzer.nextToken() }
 
             else -> throw unexpectedTokenParseException()
         }
     }
 
-    private fun unexpectedTokenParseException() = ParseException("Unexpected token", curPos())
+    private fun unexpectedTokenParseException() = ParseException("Unexpected token '${curToken()}'", curPos())
 
     private fun curToken() = lexicalAnalyzer.curToken.also { println(it) }
     private fun curPos() = lexicalAnalyzer.curPos

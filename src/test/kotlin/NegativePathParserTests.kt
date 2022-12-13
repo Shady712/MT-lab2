@@ -27,6 +27,14 @@ class NegativePathParserTests : ParserTests() {
         "Missing left parenthesis" {
             testWithParseException("a|b)")
         }
+
+        "Missing left sqr par" {
+            testWithParseException("a-x]")
+        }
+
+        "Missing right sqr par" {
+            testWithParseException("[a-x")
+        }
     }
 
     private fun testWithParseException(input: String) =

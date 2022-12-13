@@ -2,15 +2,17 @@
 Recursive descending parser for regular expressions.
 For example: "(abc)|(de)*"
 
-| Terminal |    Description    |
-|:--------:|:-----------------:|
-|   char   |    any letter     |
-|    (     | left parenthesis  |
-|    )     | right parenthesis |
-|    Or    |   Vertical line   |
-|    *     |  Klini operation  |
-|    $     |        End        |
-|    _     |      Nothing      |
+| Terminal  |    Description    |
+|:---------:|:-----------------:|
+|   char    |    any letter     |
+|     (     | left parenthesis  |
+|     )     | right parenthesis |
+|    Or     |   Vertical line   |
+|     *     |  Klini operation  |
+|     $     |        End        |
+|     _     |      Nothing      |
+| char-char |    Chars range    |
+|   chars   |       Chars       |
 
 
 | NonTerminal |   First    |        Follow        |          Description           |
@@ -33,3 +35,5 @@ For example: "(abc)|(de)*"
 * A' &rarr; _
 * M &rarr; (R)
 * M &rarr; char
+* M &rarr; S
+* S -> chars / char-char
